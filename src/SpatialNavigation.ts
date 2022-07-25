@@ -76,6 +76,7 @@ interface FocusableComponent {
   lastFocusedChildKey?: string;
   layout?: FocusableComponentLayout;
   layoutUpdated?: boolean;
+  isNavigation?:boolean;
 }
 
 interface FocusableComponentUpdatePayload {
@@ -845,6 +846,30 @@ class SpatialNavigationService {
           layout
         );
 
+      const getCommonSibling = (component: FocusableComponent) => {
+        const siblingCutoffCoordinate = SpatialNavigationService.getCutoffCoordinate(
+          isVerticalDirection,
+          isIncrementalDirection,
+          true,
+          component.layout
+        );
+        return isIncrementalDirection
+          ? siblingCutoffCoordinate >= currentCutoffCoordinate
+          : siblingCutoffCoordinate <= currentCutoffCoordinate;
+      };
+
+      const getNavSibling = (component: FocusableComponent) => {
+        if (currentComponent.isNavigation) {
+          const moveRight = !isVerticalDirection && isIncrementalDirection;
+          return moveRight ? !component.isNavigation : false;
+        }
+        if (component.isNavigation) {
+          const moveLeft = !isVerticalDirection && !isIncrementalDirection;
+          return moveLeft;
+        }
+        return false;
+      };
+
       /**
        * Get only the siblings with the coords on the way of our moving direction
        */
@@ -853,20 +878,13 @@ class SpatialNavigationService {
           component.parentFocusKey === parentFocusKey &&
           component.focusable
         ) {
+          const isNavigationComponent = component.isNavigation || currentComponent.isNavigation;
           this.updateLayout(component.focusKey);
-          const siblingCutoffCoordinate =
-            SpatialNavigationService.getCutoffCoordinate(
-              isVerticalDirection,
-              isIncrementalDirection,
-              true,
-              component.layout
-            );
-
-          return isIncrementalDirection
-            ? siblingCutoffCoordinate >= currentCutoffCoordinate
-            : siblingCutoffCoordinate <= currentCutoffCoordinate;
+          if (isNavigationComponent) {
+            return getNavSibling(component);
+          }
+          return getCommonSibling(component);
         }
-
         return false;
       });
 
@@ -1055,7 +1073,8 @@ class SpatialNavigationService {
     preferredChildFocusKey,
     autoRestoreFocus,
     focusable,
-    isFocusBoundary
+    isFocusBoundary,
+    isNavigation
   }: FocusableComponent) {
     this.focusableComponents[focusKey] = {
       focusKey,
@@ -1088,7 +1107,8 @@ class SpatialNavigationService {
          */
         node
       },
-      layoutUpdated: false
+      layoutUpdated: false,
+      isNavigation
     };
 
     if (this.nativeMode) {

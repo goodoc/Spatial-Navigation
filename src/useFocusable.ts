@@ -55,6 +55,7 @@ export interface UseFocusableConfig<P = object> {
   onFocus?: FocusHandler<P>;
   onBlur?: BlurHandler<P>;
   extraProps?: P;
+  isNavigation?:boolean;
 }
 
 export interface UseFocusableResult {
@@ -83,7 +84,8 @@ const useFocusableHook = <P>({
   onArrowPress = () => true,
   onFocus = noop,
   onBlur = noop,
-  extraProps
+  extraProps,
+  isNavigation=false,
 }: UseFocusableConfig<P> = {}): UseFocusableResult => {
   const onEnterPressHandler = useCallback(
     (details: KeyPressDetails) => {
@@ -155,7 +157,8 @@ const useFocusableHook = <P>({
       trackChildren,
       isFocusBoundary,
       autoRestoreFocus,
-      focusable
+      focusable,
+      isNavigation
     });
 
     return () => {
