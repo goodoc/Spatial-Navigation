@@ -858,7 +858,7 @@ class SpatialNavigationService {
           : siblingCutoffCoordinate <= currentCutoffCoordinate;
       };
 
-      const getNavSibling = (component: FocusableComponent) => {
+      const getNavigationSibling = (component: FocusableComponent) => {
         if (currentComponent.isNavigation) {
           const moveRight = !isVerticalDirection && isIncrementalDirection;
           return moveRight ? !component.isNavigation : false;
@@ -881,7 +881,7 @@ class SpatialNavigationService {
           const isNavigationComponent = component.isNavigation || currentComponent.isNavigation;
           this.updateLayout(component.focusKey);
           if (isNavigationComponent) {
-            return getNavSibling(component);
+            return getNavigationSibling(component);
           }
           return getCommonSibling(component);
         }
