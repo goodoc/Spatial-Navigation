@@ -324,6 +324,10 @@ Receives `FocusableComponentLayout`, `extraProps` and `FocusDetails` as argument
 An object that can be passed to the hook in order to be passed back to certain callbacks (see above).
 I.e. you can pass all the `props` of the component here, and get them all back in those callbacks.
 
+##### `isNavigation` (default: false)
+This flag indicates component is navigation or not.
+if the value is true, it is possible to get out of the navigation component only by pressing the right arrow button.
+
 #### Hook output
 
 ##### `ref` (**required**)
